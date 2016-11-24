@@ -6,8 +6,7 @@ import cgi
 
 quack = sys.stdout.write
 
-quack(r'''
-<!DOCTYPE HTML>
+quack(r'''<!DOCTYPE HTML>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8"/>
 <style>
 table#logmain {
@@ -39,9 +38,10 @@ tr.action td:nth-child(2) {
 <table id="logmain" style="width: 100%" cellpadding="0" cellspacing="4">
 ''')
 
-def row(klass='', td=[])
+def row(klass='', td=[], useraw=[])
     return '<tr class="' + cgi.escape(klass, True) ">" + ''.join(
-        '<td%s>%s</td>' % cgi.escape(tdfield) for tdfield in td) + '</tr>'
+        '<td%s>%s</td>' % (tdfield if (i in useraw) else cgi.escape(tdfield))
+        for i, tdfield in enumerate(td)) + '</tr>'
 
 line = sys.stdin.readline()
 while line:
@@ -73,7 +73,7 @@ while line:
                 nick, ident=raw[0].split("!", 1)
                 nick=nick[1:]
                 dest=raw[2]
-                quack("<tr><td style=\"text-align: right\">%s</td><td style=\"text-align: left\">%s</td><td style=\"text-align: right\"><b>%s</b></td><td style=\"width: 100%%\"><b>[<i>%s</i>]</b> 加入 %s</td></tr>\r\n" % (cgi.escape(time), cgi.escape(dest), cgi.escape(nick), cgi.escape(ident), cgi.escape(dest)))
+                quack(row('join', [time, dest, nick, '<b>[<i>%s</i>]</b> 加入 %s' % (cgi.escape(ident), cgi.escape(dest))], [3]))
             elif raw[1]=="PART":
                 nick, ident=raw[0].split("!", 1)
                 nick=nick[1:]
