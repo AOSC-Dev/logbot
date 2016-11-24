@@ -7,7 +7,7 @@ import cgi
 quack = sys.stdout.write
 
 quack(r'''<!DOCTYPE HTML>
-<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <style>
 table#logmain {
     width: 100%;
