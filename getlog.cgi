@@ -2,9 +2,9 @@
 
 IRC_LOG_FILE=irclog.log
 
-if [ "$HTTP_IF_MODIFIED_SINCE" ]
+if [ -n "$HTTP_IF_MODIFIED_SINCE" ]
 then
-    if [ "$(date -u -d "$HTTP_IF_MODIFIED_SINCE" +%s)" -ge "$(stat -c %Y $IRC_LOG_FILE)" ]
+    if [ "$(date -u -d "$HTTP_IF_MODIFIED_SINCE" +%s)" -ge "$(stat -c %Y "$IRC_LOG_FILE")" ]
     then
         echo 'Status: 304 Not Modified'
         echo
@@ -15,16 +15,16 @@ echo 'Status: 200 OK'
 echo 'Content-Type: text/html; charset=utf-8'
 echo "Last-Modified: $(date -R -u -d @$(stat -c %Y $IRC_LOG_FILE))"
 echo
-if [ "$QUERY_STRING" ]
+if [ -n "$QUERY_STRING" ]
 then
-    line_count="$(echo "$QUERY_STRING" | tr -Cd [[:digit:]])"
+    line_count="$(tr -Cd [[:digit:]] <<< "$QUERY_STRING")"
 else
     line_count=500
 fi
-if [ "$line_count" ]
+if [ -n "$line_count" ]
 then
-    tail -n "$line_count" $IRC_LOG_FILE | fmtlog.py
+    tail -n "$line_count" "$IRC_LOG_FILE" | fmtlog.py
 else
-    fmtlog.py < $IRC_LOG_FILE
+    fmtlog.py < "$IRC_LOG_FILE"
 fi
 
